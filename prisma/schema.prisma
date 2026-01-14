@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "./generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model airportNames {
+  id    Int     @id @default(autoincrement())
+  code  String  @unique
+  name  String
+}
+
+model airlineNames {
+  id    Int     @id @default(autoincrement())
+  code  String  @unique
+  name  String
+}
+
+model flights {
+  // COMPOSITE ID: A flight is unique only within the context of ONE airport
+  // This allows BGO to have a row for SK123 and OSL to have a separate row for SK123
+  @@id([uniqueId, scanned_airport])
+
+  uniqueId        String
+  scanned_airport String  // The airport we are looking at (e.g. "BGO")
+  
+  flightId        String
+  airline         String?
+  direction       String  // "A" or "D"
+  dom_int         String
+  
+  // The "Other" end of the route relative to this airport
+  // If scanned_airport is BGO (Dep), this is the Destination.
+  // If scanned_airport is OSL (Arr), this is the Origin.
+  related_airport String 
+  
+  // Generic fields (Context depends on direction)
+  schedule_time   DateTime
+  gate            String?
+  status_code     String?
+  status_time     DateTime?
+  
+  // Specifics
+  check_in        String? // Only populated if direction=D
+  belt            String? // Only populated if direction=A
+  via             String[] // Postgres Array
+
+  updatedAt       DateTime @updatedAt
+}
+
+model avinorAirports {
+  id      Int     @id @default(autoincrement())
+  code    String  @unique
+  name    String
+  altName String
+}
