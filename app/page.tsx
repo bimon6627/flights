@@ -4,6 +4,7 @@ import FilterBar from '@/components/filter-bar'
 import FlightResults from '@/components/flight-results'
 import { clsx } from 'clsx'
 import { Metadata } from 'next'
+import Footer from '@/components/footer'
 
 export const metadata: Metadata = {
   title: "Flight Schedule Avinor",
@@ -34,7 +35,8 @@ export default async function Home({
   const maxStr = max.toISOString().split('T')[0]
 
   return (
-    <main className="min-h-screen bg-gray-50 p-4 sm:p-8">
+    <div className='min-h-screen flex flex-col justify-between'>
+      <main className="flex-grow bg-gray-50 p-4 sm:p-8 mb-auto">
       <div className="max-w-5xl mx-auto">
         
         {/* Header */}
@@ -86,5 +88,7 @@ export default async function Home({
         </Suspense>
       </div>
     </main>
+    <Footer />
+    </div>
   )
 }

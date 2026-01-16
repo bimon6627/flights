@@ -138,6 +138,11 @@ def sync_job():
     if should_do_full_sync:
         print(f"!! DOING FULL SCHEDULE REFRESH (Every {FULL_SYNC_HOURS}h) !!")
 
+    headers = {
+    'User-Agent': 'bawmDepartureBoard/1.0',
+    'From': 'post@bawm.no'
+    }
+
     for code in airports:
         last_update = state.get(code)
         
@@ -150,7 +155,7 @@ def sync_job():
             url += f"&lastUpdate={last_update}"
 
         try:
-            resp = requests.get(url, timeout=10)
+            resp = requests.get(url, headers=headers, timeout=10)
             resp.raise_for_status()
             
             new_timestamp = parse_and_upsert(resp.content, code, cur)
