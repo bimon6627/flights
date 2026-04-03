@@ -34,10 +34,17 @@ export type FlightsMinAggregateOutputType = {
   related_airport: string | null
   schedule_time: Date | null
   gate: string | null
+  gate_status_code: string | null
+  gate_status_desc: string | null
   status_code: string | null
+  status_desc: string | null
   status_time: Date | null
+  aircraft_type: string | null
   check_in: string | null
   belt: string | null
+  belt_status_code: string | null
+  belt_status_desc: string | null
+  lastSyncSource: string | null
   updatedAt: Date | null
 }
 
@@ -51,10 +58,17 @@ export type FlightsMaxAggregateOutputType = {
   related_airport: string | null
   schedule_time: Date | null
   gate: string | null
+  gate_status_code: string | null
+  gate_status_desc: string | null
   status_code: string | null
+  status_desc: string | null
   status_time: Date | null
+  aircraft_type: string | null
   check_in: string | null
   belt: string | null
+  belt_status_code: string | null
+  belt_status_desc: string | null
+  lastSyncSource: string | null
   updatedAt: Date | null
 }
 
@@ -68,11 +82,18 @@ export type FlightsCountAggregateOutputType = {
   related_airport: number
   schedule_time: number
   gate: number
+  gate_status_code: number
+  gate_status_desc: number
   status_code: number
+  status_desc: number
   status_time: number
+  aircraft_type: number
   check_in: number
   belt: number
+  belt_status_code: number
+  belt_status_desc: number
   via: number
+  lastSyncSource: number
   updatedAt: number
   _all: number
 }
@@ -88,10 +109,17 @@ export type FlightsMinAggregateInputType = {
   related_airport?: true
   schedule_time?: true
   gate?: true
+  gate_status_code?: true
+  gate_status_desc?: true
   status_code?: true
+  status_desc?: true
   status_time?: true
+  aircraft_type?: true
   check_in?: true
   belt?: true
+  belt_status_code?: true
+  belt_status_desc?: true
+  lastSyncSource?: true
   updatedAt?: true
 }
 
@@ -105,10 +133,17 @@ export type FlightsMaxAggregateInputType = {
   related_airport?: true
   schedule_time?: true
   gate?: true
+  gate_status_code?: true
+  gate_status_desc?: true
   status_code?: true
+  status_desc?: true
   status_time?: true
+  aircraft_type?: true
   check_in?: true
   belt?: true
+  belt_status_code?: true
+  belt_status_desc?: true
+  lastSyncSource?: true
   updatedAt?: true
 }
 
@@ -122,11 +157,18 @@ export type FlightsCountAggregateInputType = {
   related_airport?: true
   schedule_time?: true
   gate?: true
+  gate_status_code?: true
+  gate_status_desc?: true
   status_code?: true
+  status_desc?: true
   status_time?: true
+  aircraft_type?: true
   check_in?: true
   belt?: true
+  belt_status_code?: true
+  belt_status_desc?: true
   via?: true
+  lastSyncSource?: true
   updatedAt?: true
   _all?: true
 }
@@ -213,18 +255,25 @@ export type FlightsGroupByOutputType = {
   related_airport: string
   schedule_time: Date
   gate: string | null
+  gate_status_code: string | null
+  gate_status_desc: string | null
   status_code: string | null
+  status_desc: string | null
   status_time: Date | null
+  aircraft_type: string | null
   check_in: string | null
   belt: string | null
+  belt_status_code: string | null
+  belt_status_desc: string | null
   via: string[]
+  lastSyncSource: string | null
   updatedAt: Date
   _count: FlightsCountAggregateOutputType | null
   _min: FlightsMinAggregateOutputType | null
   _max: FlightsMaxAggregateOutputType | null
 }
 
-type GetFlightsGroupByPayload<T extends flightsGroupByArgs> = Prisma.PrismaPromise<
+export type GetFlightsGroupByPayload<T extends flightsGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<FlightsGroupByOutputType, T['by']> &
       {
@@ -252,11 +301,18 @@ export type flightsWhereInput = {
   related_airport?: Prisma.StringFilter<"flights"> | string
   schedule_time?: Prisma.DateTimeFilter<"flights"> | Date | string
   gate?: Prisma.StringNullableFilter<"flights"> | string | null
+  gate_status_code?: Prisma.StringNullableFilter<"flights"> | string | null
+  gate_status_desc?: Prisma.StringNullableFilter<"flights"> | string | null
   status_code?: Prisma.StringNullableFilter<"flights"> | string | null
+  status_desc?: Prisma.StringNullableFilter<"flights"> | string | null
   status_time?: Prisma.DateTimeNullableFilter<"flights"> | Date | string | null
+  aircraft_type?: Prisma.StringNullableFilter<"flights"> | string | null
   check_in?: Prisma.StringNullableFilter<"flights"> | string | null
   belt?: Prisma.StringNullableFilter<"flights"> | string | null
+  belt_status_code?: Prisma.StringNullableFilter<"flights"> | string | null
+  belt_status_desc?: Prisma.StringNullableFilter<"flights"> | string | null
   via?: Prisma.StringNullableListFilter<"flights">
+  lastSyncSource?: Prisma.StringNullableFilter<"flights"> | string | null
   updatedAt?: Prisma.DateTimeFilter<"flights"> | Date | string
 }
 
@@ -270,11 +326,18 @@ export type flightsOrderByWithRelationInput = {
   related_airport?: Prisma.SortOrder
   schedule_time?: Prisma.SortOrder
   gate?: Prisma.SortOrderInput | Prisma.SortOrder
+  gate_status_code?: Prisma.SortOrderInput | Prisma.SortOrder
+  gate_status_desc?: Prisma.SortOrderInput | Prisma.SortOrder
   status_code?: Prisma.SortOrderInput | Prisma.SortOrder
+  status_desc?: Prisma.SortOrderInput | Prisma.SortOrder
   status_time?: Prisma.SortOrderInput | Prisma.SortOrder
+  aircraft_type?: Prisma.SortOrderInput | Prisma.SortOrder
   check_in?: Prisma.SortOrderInput | Prisma.SortOrder
   belt?: Prisma.SortOrderInput | Prisma.SortOrder
+  belt_status_code?: Prisma.SortOrderInput | Prisma.SortOrder
+  belt_status_desc?: Prisma.SortOrderInput | Prisma.SortOrder
   via?: Prisma.SortOrder
+  lastSyncSource?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
@@ -292,11 +355,18 @@ export type flightsWhereUniqueInput = Prisma.AtLeast<{
   related_airport?: Prisma.StringFilter<"flights"> | string
   schedule_time?: Prisma.DateTimeFilter<"flights"> | Date | string
   gate?: Prisma.StringNullableFilter<"flights"> | string | null
+  gate_status_code?: Prisma.StringNullableFilter<"flights"> | string | null
+  gate_status_desc?: Prisma.StringNullableFilter<"flights"> | string | null
   status_code?: Prisma.StringNullableFilter<"flights"> | string | null
+  status_desc?: Prisma.StringNullableFilter<"flights"> | string | null
   status_time?: Prisma.DateTimeNullableFilter<"flights"> | Date | string | null
+  aircraft_type?: Prisma.StringNullableFilter<"flights"> | string | null
   check_in?: Prisma.StringNullableFilter<"flights"> | string | null
   belt?: Prisma.StringNullableFilter<"flights"> | string | null
+  belt_status_code?: Prisma.StringNullableFilter<"flights"> | string | null
+  belt_status_desc?: Prisma.StringNullableFilter<"flights"> | string | null
   via?: Prisma.StringNullableListFilter<"flights">
+  lastSyncSource?: Prisma.StringNullableFilter<"flights"> | string | null
   updatedAt?: Prisma.DateTimeFilter<"flights"> | Date | string
 }, "uniqueId_scanned_airport">
 
@@ -310,11 +380,18 @@ export type flightsOrderByWithAggregationInput = {
   related_airport?: Prisma.SortOrder
   schedule_time?: Prisma.SortOrder
   gate?: Prisma.SortOrderInput | Prisma.SortOrder
+  gate_status_code?: Prisma.SortOrderInput | Prisma.SortOrder
+  gate_status_desc?: Prisma.SortOrderInput | Prisma.SortOrder
   status_code?: Prisma.SortOrderInput | Prisma.SortOrder
+  status_desc?: Prisma.SortOrderInput | Prisma.SortOrder
   status_time?: Prisma.SortOrderInput | Prisma.SortOrder
+  aircraft_type?: Prisma.SortOrderInput | Prisma.SortOrder
   check_in?: Prisma.SortOrderInput | Prisma.SortOrder
   belt?: Prisma.SortOrderInput | Prisma.SortOrder
+  belt_status_code?: Prisma.SortOrderInput | Prisma.SortOrder
+  belt_status_desc?: Prisma.SortOrderInput | Prisma.SortOrder
   via?: Prisma.SortOrder
+  lastSyncSource?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.flightsCountOrderByAggregateInput
   _max?: Prisma.flightsMaxOrderByAggregateInput
@@ -334,11 +411,18 @@ export type flightsScalarWhereWithAggregatesInput = {
   related_airport?: Prisma.StringWithAggregatesFilter<"flights"> | string
   schedule_time?: Prisma.DateTimeWithAggregatesFilter<"flights"> | Date | string
   gate?: Prisma.StringNullableWithAggregatesFilter<"flights"> | string | null
+  gate_status_code?: Prisma.StringNullableWithAggregatesFilter<"flights"> | string | null
+  gate_status_desc?: Prisma.StringNullableWithAggregatesFilter<"flights"> | string | null
   status_code?: Prisma.StringNullableWithAggregatesFilter<"flights"> | string | null
+  status_desc?: Prisma.StringNullableWithAggregatesFilter<"flights"> | string | null
   status_time?: Prisma.DateTimeNullableWithAggregatesFilter<"flights"> | Date | string | null
+  aircraft_type?: Prisma.StringNullableWithAggregatesFilter<"flights"> | string | null
   check_in?: Prisma.StringNullableWithAggregatesFilter<"flights"> | string | null
   belt?: Prisma.StringNullableWithAggregatesFilter<"flights"> | string | null
+  belt_status_code?: Prisma.StringNullableWithAggregatesFilter<"flights"> | string | null
+  belt_status_desc?: Prisma.StringNullableWithAggregatesFilter<"flights"> | string | null
   via?: Prisma.StringNullableListFilter<"flights">
+  lastSyncSource?: Prisma.StringNullableWithAggregatesFilter<"flights"> | string | null
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"flights"> | Date | string
 }
 
@@ -352,11 +436,18 @@ export type flightsCreateInput = {
   related_airport: string
   schedule_time: Date | string
   gate?: string | null
+  gate_status_code?: string | null
+  gate_status_desc?: string | null
   status_code?: string | null
+  status_desc?: string | null
   status_time?: Date | string | null
+  aircraft_type?: string | null
   check_in?: string | null
   belt?: string | null
+  belt_status_code?: string | null
+  belt_status_desc?: string | null
   via?: Prisma.flightsCreateviaInput | string[]
+  lastSyncSource?: string | null
   updatedAt?: Date | string
 }
 
@@ -370,11 +461,18 @@ export type flightsUncheckedCreateInput = {
   related_airport: string
   schedule_time: Date | string
   gate?: string | null
+  gate_status_code?: string | null
+  gate_status_desc?: string | null
   status_code?: string | null
+  status_desc?: string | null
   status_time?: Date | string | null
+  aircraft_type?: string | null
   check_in?: string | null
   belt?: string | null
+  belt_status_code?: string | null
+  belt_status_desc?: string | null
   via?: Prisma.flightsCreateviaInput | string[]
+  lastSyncSource?: string | null
   updatedAt?: Date | string
 }
 
@@ -388,11 +486,18 @@ export type flightsUpdateInput = {
   related_airport?: Prisma.StringFieldUpdateOperationsInput | string
   schedule_time?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   gate?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gate_status_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gate_status_desc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status_desc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status_time?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  aircraft_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   check_in?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   belt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  belt_status_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  belt_status_desc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   via?: Prisma.flightsUpdateviaInput | string[]
+  lastSyncSource?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -406,11 +511,18 @@ export type flightsUncheckedUpdateInput = {
   related_airport?: Prisma.StringFieldUpdateOperationsInput | string
   schedule_time?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   gate?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gate_status_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gate_status_desc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status_desc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status_time?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  aircraft_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   check_in?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   belt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  belt_status_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  belt_status_desc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   via?: Prisma.flightsUpdateviaInput | string[]
+  lastSyncSource?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -424,11 +536,18 @@ export type flightsCreateManyInput = {
   related_airport: string
   schedule_time: Date | string
   gate?: string | null
+  gate_status_code?: string | null
+  gate_status_desc?: string | null
   status_code?: string | null
+  status_desc?: string | null
   status_time?: Date | string | null
+  aircraft_type?: string | null
   check_in?: string | null
   belt?: string | null
+  belt_status_code?: string | null
+  belt_status_desc?: string | null
   via?: Prisma.flightsCreateviaInput | string[]
+  lastSyncSource?: string | null
   updatedAt?: Date | string
 }
 
@@ -442,11 +561,18 @@ export type flightsUpdateManyMutationInput = {
   related_airport?: Prisma.StringFieldUpdateOperationsInput | string
   schedule_time?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   gate?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gate_status_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gate_status_desc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status_desc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status_time?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  aircraft_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   check_in?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   belt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  belt_status_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  belt_status_desc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   via?: Prisma.flightsUpdateviaInput | string[]
+  lastSyncSource?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -460,11 +586,18 @@ export type flightsUncheckedUpdateManyInput = {
   related_airport?: Prisma.StringFieldUpdateOperationsInput | string
   schedule_time?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   gate?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gate_status_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gate_status_desc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status_desc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status_time?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  aircraft_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   check_in?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   belt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  belt_status_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  belt_status_desc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   via?: Prisma.flightsUpdateviaInput | string[]
+  lastSyncSource?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -491,11 +624,18 @@ export type flightsCountOrderByAggregateInput = {
   related_airport?: Prisma.SortOrder
   schedule_time?: Prisma.SortOrder
   gate?: Prisma.SortOrder
+  gate_status_code?: Prisma.SortOrder
+  gate_status_desc?: Prisma.SortOrder
   status_code?: Prisma.SortOrder
+  status_desc?: Prisma.SortOrder
   status_time?: Prisma.SortOrder
+  aircraft_type?: Prisma.SortOrder
   check_in?: Prisma.SortOrder
   belt?: Prisma.SortOrder
+  belt_status_code?: Prisma.SortOrder
+  belt_status_desc?: Prisma.SortOrder
   via?: Prisma.SortOrder
+  lastSyncSource?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
@@ -509,10 +649,17 @@ export type flightsMaxOrderByAggregateInput = {
   related_airport?: Prisma.SortOrder
   schedule_time?: Prisma.SortOrder
   gate?: Prisma.SortOrder
+  gate_status_code?: Prisma.SortOrder
+  gate_status_desc?: Prisma.SortOrder
   status_code?: Prisma.SortOrder
+  status_desc?: Prisma.SortOrder
   status_time?: Prisma.SortOrder
+  aircraft_type?: Prisma.SortOrder
   check_in?: Prisma.SortOrder
   belt?: Prisma.SortOrder
+  belt_status_code?: Prisma.SortOrder
+  belt_status_desc?: Prisma.SortOrder
+  lastSyncSource?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
@@ -526,10 +673,17 @@ export type flightsMinOrderByAggregateInput = {
   related_airport?: Prisma.SortOrder
   schedule_time?: Prisma.SortOrder
   gate?: Prisma.SortOrder
+  gate_status_code?: Prisma.SortOrder
+  gate_status_desc?: Prisma.SortOrder
   status_code?: Prisma.SortOrder
+  status_desc?: Prisma.SortOrder
   status_time?: Prisma.SortOrder
+  aircraft_type?: Prisma.SortOrder
   check_in?: Prisma.SortOrder
   belt?: Prisma.SortOrder
+  belt_status_code?: Prisma.SortOrder
+  belt_status_desc?: Prisma.SortOrder
+  lastSyncSource?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
@@ -566,11 +720,18 @@ export type flightsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   related_airport?: boolean
   schedule_time?: boolean
   gate?: boolean
+  gate_status_code?: boolean
+  gate_status_desc?: boolean
   status_code?: boolean
+  status_desc?: boolean
   status_time?: boolean
+  aircraft_type?: boolean
   check_in?: boolean
   belt?: boolean
+  belt_status_code?: boolean
+  belt_status_desc?: boolean
   via?: boolean
+  lastSyncSource?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["flights"]>
 
@@ -584,11 +745,18 @@ export type flightsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   related_airport?: boolean
   schedule_time?: boolean
   gate?: boolean
+  gate_status_code?: boolean
+  gate_status_desc?: boolean
   status_code?: boolean
+  status_desc?: boolean
   status_time?: boolean
+  aircraft_type?: boolean
   check_in?: boolean
   belt?: boolean
+  belt_status_code?: boolean
+  belt_status_desc?: boolean
   via?: boolean
+  lastSyncSource?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["flights"]>
 
@@ -602,11 +770,18 @@ export type flightsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   related_airport?: boolean
   schedule_time?: boolean
   gate?: boolean
+  gate_status_code?: boolean
+  gate_status_desc?: boolean
   status_code?: boolean
+  status_desc?: boolean
   status_time?: boolean
+  aircraft_type?: boolean
   check_in?: boolean
   belt?: boolean
+  belt_status_code?: boolean
+  belt_status_desc?: boolean
   via?: boolean
+  lastSyncSource?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["flights"]>
 
@@ -620,15 +795,22 @@ export type flightsSelectScalar = {
   related_airport?: boolean
   schedule_time?: boolean
   gate?: boolean
+  gate_status_code?: boolean
+  gate_status_desc?: boolean
   status_code?: boolean
+  status_desc?: boolean
   status_time?: boolean
+  aircraft_type?: boolean
   check_in?: boolean
   belt?: boolean
+  belt_status_code?: boolean
+  belt_status_desc?: boolean
   via?: boolean
+  lastSyncSource?: boolean
   updatedAt?: boolean
 }
 
-export type flightsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"uniqueId" | "scanned_airport" | "flightId" | "airline" | "direction" | "dom_int" | "related_airport" | "schedule_time" | "gate" | "status_code" | "status_time" | "check_in" | "belt" | "via" | "updatedAt", ExtArgs["result"]["flights"]>
+export type flightsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"uniqueId" | "scanned_airport" | "flightId" | "airline" | "direction" | "dom_int" | "related_airport" | "schedule_time" | "gate" | "gate_status_code" | "gate_status_desc" | "status_code" | "status_desc" | "status_time" | "aircraft_type" | "check_in" | "belt" | "belt_status_code" | "belt_status_desc" | "via" | "lastSyncSource" | "updatedAt", ExtArgs["result"]["flights"]>
 
 export type $flightsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "flights"
@@ -643,11 +825,18 @@ export type $flightsPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     related_airport: string
     schedule_time: Date
     gate: string | null
+    gate_status_code: string | null
+    gate_status_desc: string | null
     status_code: string | null
+    status_desc: string | null
     status_time: Date | null
+    aircraft_type: string | null
     check_in: string | null
     belt: string | null
+    belt_status_code: string | null
+    belt_status_desc: string | null
     via: string[]
+    lastSyncSource: string | null
     updatedAt: Date
   }, ExtArgs["result"]["flights"]>
   composites: {}
@@ -1081,11 +1270,18 @@ export interface flightsFieldRefs {
   readonly related_airport: Prisma.FieldRef<"flights", 'String'>
   readonly schedule_time: Prisma.FieldRef<"flights", 'DateTime'>
   readonly gate: Prisma.FieldRef<"flights", 'String'>
+  readonly gate_status_code: Prisma.FieldRef<"flights", 'String'>
+  readonly gate_status_desc: Prisma.FieldRef<"flights", 'String'>
   readonly status_code: Prisma.FieldRef<"flights", 'String'>
+  readonly status_desc: Prisma.FieldRef<"flights", 'String'>
   readonly status_time: Prisma.FieldRef<"flights", 'DateTime'>
+  readonly aircraft_type: Prisma.FieldRef<"flights", 'String'>
   readonly check_in: Prisma.FieldRef<"flights", 'String'>
   readonly belt: Prisma.FieldRef<"flights", 'String'>
+  readonly belt_status_code: Prisma.FieldRef<"flights", 'String'>
+  readonly belt_status_desc: Prisma.FieldRef<"flights", 'String'>
   readonly via: Prisma.FieldRef<"flights", 'String[]'>
+  readonly lastSyncSource: Prisma.FieldRef<"flights", 'String'>
   readonly updatedAt: Prisma.FieldRef<"flights", 'DateTime'>
 }
     
@@ -1263,6 +1459,11 @@ export type flightsFindManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Skip the first `n` flights.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of flights.
+   */
   distinct?: Prisma.FlightsScalarFieldEnum | Prisma.FlightsScalarFieldEnum[]
 }
 

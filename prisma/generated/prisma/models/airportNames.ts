@@ -178,7 +178,7 @@ export type AirportNamesGroupByOutputType = {
   _max: AirportNamesMaxAggregateOutputType | null
 }
 
-type GetAirportNamesGroupByPayload<T extends airportNamesGroupByArgs> = Prisma.PrismaPromise<
+export type GetAirportNamesGroupByPayload<T extends airportNamesGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<AirportNamesGroupByOutputType, T['by']> &
       {
@@ -951,6 +951,11 @@ export type airportNamesFindManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * Skip the first `n` airportNames.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of airportNames.
+   */
   distinct?: Prisma.AirportNamesScalarFieldEnum | Prisma.AirportNamesScalarFieldEnum[]
 }
 

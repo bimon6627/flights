@@ -185,7 +185,7 @@ export type AvinorAirportsGroupByOutputType = {
   _max: AvinorAirportsMaxAggregateOutputType | null
 }
 
-type GetAvinorAirportsGroupByPayload<T extends avinorAirportsGroupByArgs> = Prisma.PrismaPromise<
+export type GetAvinorAirportsGroupByPayload<T extends avinorAirportsGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<AvinorAirportsGroupByOutputType, T['by']> &
       {
@@ -967,6 +967,11 @@ export type avinorAirportsFindManyArgs<ExtArgs extends runtime.Types.Extensions.
    * Skip the first `n` avinorAirports.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of avinorAirports.
+   */
   distinct?: Prisma.AvinorAirportsScalarFieldEnum | Prisma.AvinorAirportsScalarFieldEnum[]
 }
 

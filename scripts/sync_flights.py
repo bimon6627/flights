@@ -1,12 +1,12 @@
 import os
-import time
 import json
 import requests
 import xml.etree.ElementTree as ET
 import psycopg2
-from datetime import datetime, timezone
+from datetime import datetime
 from dotenv import load_dotenv
-from datetime import timedelta
+from datetime import timedelta, timezone
+import json
 
 load_dotenv()
 
@@ -33,6 +33,70 @@ def save_state(state):
     with open(STATE_FILE, 'w') as f:
         json.dump(state, f)
 
+
+def generate_avinor_id(flight_id, from_iata, to_iata, schedule_time):    
+    date_part = schedule_time.split('T')[0].replace('-', '')
+    return f"{flight_id}-{from_iata}-{to_iata}-{date_part}".lower()
+
+
+
+def sync_json_details(airport_code, cur):
+    today_str = datetime.now().strftime('%Y-%m-%d')
+    
+    # We need to check both directions because the JSON API splits them
+    for direction in ['departure', 'arrival']:
+        url = f"https://www.avinor.no/api/v1/flights/{direction}/{airport_code}?dateTime={today_str}"
+        
+        try:
+            resp = requests.get(url, timeout=10)
+            resp.raise_for_status()
+            data = resp.json()
+            
+            flight_legs = data.get('flightLegs', [])
+            upsert_data = []
+
+            for leg in flight_legs:
+                # The JSON 'id' usually matches the XML 'uniqueID' format
+                unique_id = leg.get('id')
+                
+                # Extract Gate/Belt info safely
+                dep = leg.get('departure', {})
+                arr = leg.get('arrival', {})
+                gate_info = dep.get('gate') or {}
+                belt_info = arr.get('belt') or {}
+
+                row = {
+                    "uniqueId": unique_id,
+                    "scanned_airport": airport_code,
+                    "gate": gate_info.get('gate'),
+                    "gate_status_code": gate_info.get('status'),
+                    "gate_status_desc": gate_info.get('statusDescription'),
+                    "belt": belt_info.get('belt'),
+                    "belt_status_code": belt_info.get('status'),
+                    "belt_status_desc": belt_info.get('statusDescription'),
+                    "lastSyncSource": "JSON",
+                    "updatedAt": datetime.now(timezone.utc)
+                }
+                upsert_data.append(row)
+
+            if upsert_data:
+                query = """
+                    UPDATE flights SET
+                    "gate" = %(gate)s,
+                    "gate_status_code" = %(gate_status_code)s,
+                    "gate_status_desc" = %(gate_status_desc)s,
+                    "belt" = %(belt)s,
+                    "belt_status_code" = %(belt_status_code)s,
+                    "belt_status_desc" = %(belt_status_desc)s,
+                    "lastSyncSource" = %(lastSyncSource)s,
+                    "updatedAt" = %(updatedAt)s
+                    WHERE "uniqueId" = %(uniqueId)s AND "scanned_airport" = %(scanned_airport)s;
+                """
+                cur.executemany(query, upsert_data)
+
+        except Exception as e:
+            print(f"JSON Sync failed for {airport_code} {direction}: {e}")
+
 def parse_and_upsert(xml_content, current_airport_code, cur):
     try:
         root = ET.fromstring(xml_content)
@@ -43,6 +107,14 @@ def parse_and_upsert(xml_content, current_airport_code, cur):
         flight_data = []
         
         for flight in flights_container.findall('flight'):
+            flight_id = flight.findtext('flight_id') or flight.findtext('flightId')
+            remote_airport = flight.findtext('airport')
+            direction = flight.findtext('arr_dep')
+
+            from_iata = current_airport_code if direction == 'D' else remote_airport
+            to_iata = remote_airport if direction == 'D' else current_airport_code
+            generated_id = generate_avinor_id(flight_id, from_iata, to_iata, flight.findtext('schedule_time'))
+            
             unique_id = flight.attrib.get('uniqueID') or flight.attrib.get('uniqueId')
             if not unique_id: continue
             
@@ -55,9 +127,9 @@ def parse_and_upsert(xml_content, current_airport_code, cur):
             # 3. Prepare Simple Row
             # We treat the data as "True for this airport only"
             row = {
-                "uniqueId": unique_id,
+                "uniqueId": generated_id,
                 "scanned_airport": current_airport_code, # PART OF KEY
-                "flightId": flight.findtext('flight_id') or flight.findtext('flightId'),
+                "flightId": flight_id,
                 "airline": flight.findtext('airline'),
                 "direction": direction,
                 "related_airport": remote_airport,
@@ -77,9 +149,6 @@ def parse_and_upsert(xml_content, current_airport_code, cur):
             flight_data.append(row)
 
         if not flight_data: return api_last_update
-
-        # 4. Upsert with Composite Key
-        # Note the ON CONFLICT target is now (uniqueId, scanned_airport)
         query = """
             INSERT INTO flights (
                 "uniqueId", "scanned_airport", "flightId", "airline", "direction", 
@@ -91,19 +160,14 @@ def parse_and_upsert(xml_content, current_airport_code, cur):
                 %(check_in)s, %(belt)s, %(via)s, %(dom_int)s, %(updatedAt)s
             )
             ON CONFLICT ("uniqueId", "scanned_airport") DO UPDATE SET
-                "flightId"        = EXCLUDED."flightId",
-                "airline"         = EXCLUDED."airline",
-                "direction"       = EXCLUDED."direction",
-                "related_airport" = EXCLUDED."related_airport",
-                "schedule_time"   = EXCLUDED."schedule_time",
-                "gate"            = EXCLUDED."gate",
-                "status_code"     = EXCLUDED."status_code",
-                "status_time"     = EXCLUDED."status_time",
-                "check_in"        = EXCLUDED."check_in",
-                "belt"            = EXCLUDED."belt",
-                "via"             = EXCLUDED."via",
-                "updatedAt"       = EXCLUDED."updatedAt",
-                "dom_int"         = EXCLUDED."dom_int";
+                "flightId" = EXCLUDED."flightId",
+                "airline" = EXCLUDED."airline",
+                "schedule_time" = EXCLUDED."schedule_time",
+                "status_code" = EXCLUDED."status_code",
+                "status_time" = EXCLUDED."status_time",
+                "gate" = COALESCE(EXCLUDED."gate", flights."gate"),
+                "belt" = COALESCE(EXCLUDED."belt", flights."belt"),
+                "updatedAt" = EXCLUDED."updatedAt";
         """
         
         cur.executemany(query, flight_data)
@@ -160,6 +224,7 @@ def sync_job():
             
             new_timestamp = parse_and_upsert(resp.content, code, cur)
             
+            sync_json_details(code, cur)
             # Update state with the new timestamp provided by Avinor
             if new_timestamp:
                 state[code] = new_timestamp

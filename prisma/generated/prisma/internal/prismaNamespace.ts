@@ -80,12 +80,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 7.2.0
- * Query Engine version: 0c8ef2ce45c83248ab3df073180d5eda9e8be7a3
+ * Prisma Client JS version: 7.6.0
+ * Query Engine version: 75cbdc1eb7150937890ad5465d861175c6624711
  */
 export const prismaVersion: PrismaVersion = {
-  client: "7.2.0",
-  engine: "0c8ef2ce45c83248ab3df073180d5eda9e8be7a3"
+  client: "7.6.0",
+  engine: "75cbdc1eb7150937890ad5465d861175c6624711"
 }
 
 /**
@@ -770,11 +770,18 @@ export const FlightsScalarFieldEnum = {
   related_airport: 'related_airport',
   schedule_time: 'schedule_time',
   gate: 'gate',
+  gate_status_code: 'gate_status_code',
+  gate_status_desc: 'gate_status_desc',
   status_code: 'status_code',
+  status_desc: 'status_desc',
   status_time: 'status_time',
+  aircraft_type: 'aircraft_type',
   check_in: 'check_in',
   belt: 'belt',
+  belt_status_code: 'belt_status_code',
+  belt_status_desc: 'belt_status_desc',
   via: 'via',
+  lastSyncSource: 'lastSyncSource',
   updatedAt: 'updatedAt'
 } as const
 

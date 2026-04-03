@@ -26,11 +26,8 @@ model airlineNames {
 }
 
 model flights {
-  // COMPOSITE ID: A flight is unique only within the context of ONE airport
-  // This allows BGO to have a row for SK123 and OSL to have a separate row for SK123
   @@id([uniqueId, scanned_airport])
-
-  uniqueId        String
+  uniqueId         String
   scanned_airport String  // The airport we are looking at (e.g. "BGO")
   
   flightId        String
@@ -46,14 +43,23 @@ model flights {
   // Generic fields (Context depends on direction)
   schedule_time   DateTime
   gate            String?
+  gate_status_code String?
+  gate_status_desc String?
+
+  // Flight status
   status_code     String?
+  status_desc     String?
   status_time     DateTime?
   
   // Specifics
+  aircraft_type    String?
   check_in        String? // Only populated if direction=D
   belt            String? // Only populated if direction=A
+  belt_status_code  String?
+  belt_status_desc  String?
   via             String[] // Postgres Array
 
+  lastSyncSource   String?
   updatedAt       DateTime @updatedAt
 }
 

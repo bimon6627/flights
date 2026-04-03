@@ -18,19 +18,53 @@ function StatusBadge({
   code,
   schedule,
   time,
-  direction,
+  desc, // Flight Status Description (e.g., "Delayed")
+  gateCode,
+  gateDesc, // Gate Status Description (e.g., "Gate Closing")
 }: {
   code: string | null;
   schedule: Date;
   time: Date | null;
-  direction: "A" | "D";
+  desc: string | null;
+  gateCode: string | null;
+  gateDesc: string | null;
 }) {
+  const gateStyles: Record<string, string> = {
+    G: "bg-green-100 text-green-800 border-green-200",
+    B: "bg-orange-100 text-orange-800 border-orange-200",
+    C: "bg-red-100 text-red-800 border-red-200",
+    F: "bg-red-100 text-red-800 border-red-200 animate-pulse",
+  };
+
+  const gateFallbackLabels: Record<string, string> = {
+    G: "Go to gate",
+    B: "Boarding",
+    C: "Gate closed",
+    F: "Gate closing",
+  };
+  // 1. GATE STATUS TRUMPS FLIGHT STATUS
+  // If Avinor provides a gate-specific message, show it in a "High Alert" style
+  if (gateCode && code != "D") {
+    const gateStyleClass = gateStyles[gateCode] || "bg-gray-100";
+    const gateLabel = gateDesc || gateFallbackLabels[gateCode] || gateCode;
+    return (
+      <span
+        className={clsx(
+          "inline-block px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-bold border whitespace-nowrap",
+          gateStyleClass,
+        )}
+      >
+        {gateLabel}
+      </span>
+    );
+  }
+
+  // 2. FALLBACK TO NORMAL FLIGHT STATUS LOGIC
   if (!code) return null;
 
   let displayCode = code;
 
-  // FIX: Changed || to && to correctly define the "ignore window"
-  // This hides the badge only if the time is WITHIN +/- 10 minutes of the schedule
+  // Hide "New Time" badge if change is less than 10 mins (your existing logic)
   if (
     displayCode === "E" &&
     (!time?.getTime() ||
@@ -38,10 +72,6 @@ function StatusBadge({
         time.getTime() + 10 * 60000 > schedule.getTime()))
   ) {
     return null;
-  }
-
-  if (direction === "D" && code === "A") {
-    displayCode = "D";
   }
 
   const styles: Record<string, string> = {
@@ -52,7 +82,7 @@ function StatusBadge({
     N: "bg-gray-100 text-gray-800 border-gray-200",
   };
 
-  const labels: Record<string, string> = {
+  const fallbackLabels: Record<string, string> = {
     A: "Arrived",
     C: "Cancelled",
     D: "Departed",
@@ -61,22 +91,24 @@ function StatusBadge({
   };
 
   const styleClass = styles[displayCode] || "bg-gray-100";
-  const label = labels[displayCode] || displayCode;
+  const label = desc || fallbackLabels[displayCode] || displayCode;
 
   return (
     <span
       className={clsx(
         "inline-block px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-bold border whitespace-nowrap",
-        styleClass
+        styleClass,
       )}
     >
-      {label}{" "}
-      {time &&
-        displayCode === "E" &&
-        time.toLocaleTimeString("no-NO", {
-          hour: "2-digit",
-          minute: "2-digit",
-        })}
+      {label}
+      {time && displayCode === "E" && (
+        <span className="ml-1">
+          {time.toLocaleTimeString("no-NO", {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        </span>
+      )}
     </span>
   );
 }
@@ -167,14 +199,14 @@ export default function FlightsTable({
                   "px-3 py-1 text-xs font-bold rounded-md transition-all",
                   flightType === type
                     ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-500 hover:text-gray-700 hover:bg-gray-200"
+                    : "text-gray-500 hover:text-gray-700 hover:bg-gray-200",
                 )}
               >
                 {type === "ALL"
                   ? "All"
                   : type === "DOM"
-                  ? "Domestic"
-                  : "International"}
+                    ? "Domestic"
+                    : "International"}
               </button>
             ))}
           </div>
@@ -247,11 +279,11 @@ export default function FlightsTable({
 
               const displayTime = flight.schedule_time.toLocaleTimeString(
                 "no-NO",
-                { hour: "2-digit", minute: "2-digit" }
+                { hour: "2-digit", minute: "2-digit" },
               );
               const statusTime = flight.status_time?.toLocaleTimeString(
                 "no-NO",
-                { hour: "2-digit", minute: "2-digit" }
+                { hour: "2-digit", minute: "2-digit" },
               );
               const isDeparted =
                 flight.status_code === "D" ||
@@ -284,7 +316,7 @@ export default function FlightsTable({
                           "font-bold tabular-nums",
                           isSignificantChange || isDeparted
                             ? "text-gray-400 line-through text-xs sm:text-sm"
-                            : "text-gray-900"
+                            : "text-gray-900",
                         )}
                       >
                         {displayTime}
@@ -296,7 +328,7 @@ export default function FlightsTable({
                               "font-bold tabular-nums",
                               isSignificantChange
                                 ? "text-yellow-600"
-                                : "text-gray-900"
+                                : "text-gray-900",
                             )}
                           >
                             {flight.status_time.toLocaleTimeString("no-NO", {
@@ -357,7 +389,9 @@ export default function FlightsTable({
                       code={flight.status_code}
                       schedule={flight.schedule_time}
                       time={flight.status_time}
-                      direction={direction}
+                      desc={flight.status_desc}
+                      gateCode={flight.gate_status_code}
+                      gateDesc={flight.gate_status_desc}
                     />
                   </td>
                 </tr>
