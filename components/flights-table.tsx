@@ -6,6 +6,7 @@ import { clsx } from "clsx";
 import type { FlightViewModel } from "@/app/actions";
 import Link from "next/link";
 import { BiInfoCircle } from "react-icons/bi";
+import getFlightNotifications, { FlightInfo } from "./flight-notification";
 
 type FlightsTableProps = {
   flights: FlightViewModel[];
@@ -19,6 +20,7 @@ function StatusBadge({
   schedule,
   time,
   desc, // Flight Status Description (e.g., "Delayed")
+  direction,
   gateCode,
   gateDesc, // Gate Status Description (e.g., "Gate Closing")
 }: {
@@ -26,31 +28,32 @@ function StatusBadge({
   schedule: Date;
   time: Date | null;
   desc: string | null;
+  direction: "A" | "D";
   gateCode: string | null;
   gateDesc: string | null;
 }) {
   const gateStyles: Record<string, string> = {
-    G: "bg-green-100 text-green-800 border-green-200",
-    B: "bg-orange-100 text-orange-800 border-orange-200",
-    C: "bg-red-100 text-red-800 border-red-200",
-    F: "bg-red-100 text-red-800 border-red-200 animate-pulse",
+    O: "bg-green-50 text-green-700 border-green-200",
+    B: "bg-green-100 text-green-800 border-green-300 animate-pulse",
+    C: "bg-slate-100 text-slate-500 border-slate-200 opacity-75",
+    F: "bg-orange-100 text-orange-700 border-orange-200 animate-pulse",
   };
 
   const gateFallbackLabels: Record<string, string> = {
-    G: "Go to gate",
+    O: "Go to gate",
     B: "Boarding",
     C: "Gate closed",
     F: "Gate closing",
   };
   // 1. GATE STATUS TRUMPS FLIGHT STATUS
   // If Avinor provides a gate-specific message, show it in a "High Alert" style
-  if (gateCode && code != "D") {
+  if (gateCode && code != "D" && direction == "D") {
     const gateStyleClass = gateStyles[gateCode] || "bg-gray-100";
     const gateLabel = gateDesc || gateFallbackLabels[gateCode] || gateCode;
     return (
       <span
         className={clsx(
-          "inline-block px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-bold border whitespace-nowrap",
+          "inline-block px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold border whitespace-nowrap",
           gateStyleClass,
         )}
       >
@@ -75,11 +78,11 @@ function StatusBadge({
   }
 
   const styles: Record<string, string> = {
-    A: "bg-green-100 text-green-800 border-green-200",
-    C: "bg-red-100 text-red-800 border-red-200",
-    D: "bg-blue-100 text-blue-800 border-blue-200",
-    E: "bg-yellow-100 text-yellow-800 border-yellow-200",
-    N: "bg-gray-100 text-gray-800 border-gray-200",
+    A: "bg-green-50 text-green-700 border-green-200",
+    C: "bg-red-50 text-red-700 border-red-200 font-extrabold",
+    D: "bg-blue-50 text-blue-700 border-blue-200",
+    E: "bg-yellow-50 text-yellow-700 border-yellow-200",
+    N: "bg-gray-50 text-gray-700 border-gray-200",
   };
 
   const fallbackLabels: Record<string, string> = {
@@ -96,7 +99,7 @@ function StatusBadge({
   return (
     <span
       className={clsx(
-        "inline-block px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-bold border whitespace-nowrap",
+        "inline-block px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold border whitespace-nowrap",
         styleClass,
       )}
     >
@@ -255,6 +258,9 @@ export default function FlightsTable({
               <th className="px-2 sm:px-6 py-4 w-auto">
                 {direction === "D" ? "Destination" : "Origin"}
               </th>
+              <th className="hidden md:table-cell px-6 py-4 hidden sm:table-cell w-px whitespace-nowrap">
+                Info
+              </th>
               <th className="px-2 sm:px-6 py-4 hidden sm:table-cell w-px whitespace-nowrap">
                 Flight
               </th>
@@ -289,7 +295,7 @@ export default function FlightsTable({
                 flight.status_code === "D" ||
                 (direction === "D" && flight.status_code === "A");
               const isDelayed =
-                flight.status_code === "E" &&
+                (flight.status_code === "E" || flight.status_code === "N") &&
                 flight.status_time?.getTime() &&
                 statusTime != displayTime;
 
@@ -356,12 +362,31 @@ export default function FlightsTable({
                           </p>
                         </div>
                       </div>
-                      {flight.dom_int === "I" && direction === "D" ? (
-                        <div className="hidden md:flex flex-row items-center gap-2 ml-auto my-auto px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-bold border whitespace-nowrap bg-blue-100 text-blue-800 border-blue-200">
-                          <BiInfoCircle /> <p>Passport Control</p>
-                        </div>
-                      ) : (
-                        <></>
+                    </div>
+                  </td>
+                  <td className="hidden md:table-cell px-3 py-4">
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {getFlightNotifications(flight, direction).map(
+                        (alert, i) => {
+                          const Icon = alert.icon;
+                          return (
+                            <div
+                              key={i}
+                              className={clsx(
+                                "flex items-center gap-2 my-auto px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-bold border whitespace-nowrap",
+                                alert.type === "delay" &&
+                                  "bg-yellow-50 text-yellow-700 border-yellow-200",
+                                alert.type === "info" &&
+                                  "bg-blue-50 text-blue-700 border-blue-200",
+                                alert.type === "warning" &&
+                                  "bg-red-50 text-red-700 border-red-200",
+                              )}
+                            >
+                              <Icon className="w-3 h-3" />
+                              <span>{alert.message}</span>
+                            </div>
+                          );
+                        },
                       )}
                     </div>
                   </td>
@@ -377,7 +402,7 @@ export default function FlightsTable({
                   </td>
                   <td className="px-2 sm:px-6 py-3 sm:py-4 text-center">
                     {flight.gate ? (
-                      <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 text-gray-800 font-bold border border-gray-200 text-xs sm:text-sm">
+                      <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 text-gray-700 font-bold border border-gray-200 text-xs sm:text-sm">
                         {flight.gate}
                       </span>
                     ) : (
@@ -389,6 +414,7 @@ export default function FlightsTable({
                       code={flight.status_code}
                       schedule={flight.schedule_time}
                       time={flight.status_time}
+                      direction={direction}
                       desc={flight.status_desc}
                       gateCode={flight.gate_status_code}
                       gateDesc={flight.gate_status_desc}
